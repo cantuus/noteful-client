@@ -1,9 +1,8 @@
 import React, {Component} from "react";
-import axios from "axios";
+import UserInformationContext from './UserInfo'
 
-const UserContext = React.createContext();
 
-class UserContext extends Component{
+export default class UserContext extends Component{
 
     constructor(props){
         super(props);
@@ -19,41 +18,60 @@ class UserContext extends Component{
     }
 
     loadFolders(){
-        axios({
-            url:`http://localhost:9090/folders`,
-            method:"get"
-        }).then(response => {
-            this.setState({
-                folders:response,
-            });
-        });
+        fetch('http://localhost:9090/folders')
+           .then(response => {
+               if(response.ok){
+                   console.log('bang')
+                   return response.json();
+               }
+               throw new Error(response.statusText);
+           })
+           .then(responseJson => {
+               console.log('boom')
+               this.setState({
+                   folders: responseJson
+               },() => console.log(this.state))
+           })
     }
 
     loadNotes(){
-        axios({
-            url:`http://localhost:9090/notes`,
-            method:"get"
-        }).then(response => {
-            this.setState({
-                videoList:response.data.videosAndTheme.videoList,
-                
-            });
-        });
+        fetch('http://localhost:9090/notes')
+           .then(response => {
+               if(response.ok){
+                   console.log('bang')
+                   return response.json();
+               }
+               throw new Error(response.statusText);
+           })
+           .then(responseJson => {
+               console.log('boom')
+               this.setState({
+                   notes: responseJson
+               },() => console.log(this.state))
+           })
+    }
+
+    handleDeleteItem (id) {
+        let filteredNotes = this.state.notes.filter(function(note){
+            return note.id !== id
+        })
+        this.setState({
+            notes: filteredNotes
+        })
+
     }
 
     
-
     render(){
         return (
-            <VideoInformationContext.Provider value={this.state}>
+            <UserInformationContext.Provider value={this.state} handleDeleteItem={this.handleDeleteItem}>
                 {this.props.children}
-            </VideoInformationContext.Provider>
+            </UserInformationContext.Provider>
         );
     }
 }
 
-export const VideoinformationConsumer = VideoInformationContext.Consumer;
-export default VideoContext;
+//export const VideoinformationConsumer = VideoInformationContext.Consumer;
 
 
 

@@ -8,20 +8,13 @@ import NotePageMain from '../NotePageMain/NotePageMain';
 import dummyStore from '../dummy-store';
 import { getNotesForFolder, findNote, findFolder } from '../notes-helpers';
 import './App.css';
+import UserContext from '../UserContext'
 
 class App extends Component {
     state = {
         notes: [],
-        folders: FolderContext
+        folders: []
     };
-
-
-
-handleDeleteItem(responseJson) {
-    this.setState({
-        notes: 
-        })
-}
 
 componentDidMount() {
     // fake date loading from API call
@@ -99,6 +92,7 @@ renderMainRoutes() {
 
 render() {
     return (
+        <UserContext>
         <div className="App">
             <nav className="App__nav">{this.renderNavRoutes()}</nav>
             <header className="App__header">
@@ -109,6 +103,7 @@ render() {
             </header>
             <main className="App__main">{this.renderMainRoutes()}</main>
         </div>
+        </UserContext>
     );
 }
 }
